@@ -16,12 +16,18 @@ if [[ -d /etc/squid/ || -d /etc/squid3/ ]]; then
 fi
 
 #squid variable
-read -r -p "squid_user(default username:admin):" -i "admin" squid_user
-read -r -p "squid_password(default password:qwerty@123)" -i "qwerty@123" squid_password
-echo $squid_user\n$squid_password > /etc/squid/squid_login
+
+squid_user="admin"
+read -e -i "$squid_user" -p "squid_default (username:admin):" input
+squid_user="${input:-$squid_user}"
+
+squid_password="qwerty@123"
+read -e -i "$squid_password" -p "squid_default (password:qwerty@123):" input1
+squid_password="${input1:-$squid_password}"
+
 
 #squid_user=admin 
-#squid_password=firefox@123
+#squid_password=fox
 
 #install required packages
 /usr/bin/apt -y install apache2-utils squid3 wget
@@ -47,6 +53,8 @@ sudo chown proxy /etc/squid/squid_passwd
 #iptable port allow rule
 /sbin/iptables -I INPUT -p tcp --dport 17361 -j ACCEPT
 /sbin/iptables-save
+
+echo $squid_user:$squid_password > /etc/squid/squid_login
 
 #service restart
 service squid restart
