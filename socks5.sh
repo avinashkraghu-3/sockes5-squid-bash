@@ -64,11 +64,6 @@ function Uninstallation(){
 
 function SuccessMessage(){
  clear
- echo -e ""
- YourBanner
- echo -e ""
- echo -e "== Success installed SOCKS5 Server into your VPS =="
- echo -e ""
  echo -e " Your SOCKS5 Proxy IP Address: $(wget -4qO- http://ipinfo.io/ip)"
  echo -e " Your SOCKS5 Proxy Port: $SOCKSPORT"
  if [ "$SOCKSAUTH" == 'username' ]; then
@@ -91,7 +86,7 @@ EOF
  cat ~/socks5.txt 
 }
 echo -e " Choose SOCKS5 Proxy Type"
-echo -e " [1] Private Proxy (Can be Accessable using username and password Authentication"
+echo -e " [1] Private Proxy (Can be Accessable using username and password Authentication)"
 echo -e " [2] Uninstall SOCKS5 Proxy Server"
 until [[ "$opts" =~ ^[1-2]$ ]]; do
 	read -rp " Choose from [1-2]: " -e opts
@@ -102,8 +97,12 @@ until [[ "$opts" =~ ^[1-2]$ ]]; do
 	SOCKSPORT=17362
 	done
 	SOCKSAUTH='username'
+	until [[ "$socksUser" =~ ^[a-zA-Z0-9_]+$ ]]; do
 	read -rp " Your SOCKS5 Username: " -e socksUser
+	done
+	until [[ "$socksPass" =~ ^[a-zA-Z0-9_]+$ ]]; do
 	read -rp " Your SOCKS5 Password: " -e socksPass
+	done
 	userdel -r -f $socksUser &> /dev/null
 	useradd -m -s /bin/false $socksUser
 	echo -e "$socksPass\n$socksPass\n" | passwd $socksUser &> /dev/null
@@ -114,4 +113,5 @@ until [[ "$opts" =~ ^[1-2]$ ]]; do
 	exit 1
 	;;
 esac
+SuccessMessage
 exit 1
